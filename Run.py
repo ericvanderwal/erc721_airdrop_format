@@ -1,12 +1,13 @@
 import csv
 import os
 import re
+import json
 
 # Variables
 path = 'addresses.csv'
 output_path = 'chunked_address.txt'
 chunk_size = 100
-start_token_id = 1421
+start_token_id = 1000
 
 
 def read_column_a(file_path):
@@ -59,10 +60,11 @@ def is_valid_eth_address(address):
 
 def chunk_addresses(column_a_values, chunk_size, start_token_id, output_file_path='chunked_address.txt'):
     """
-    Chunks the addresses and writes them to a file.
+    Chunks the addresses and writes them to a file in JSON format.
     :param column_a_values: List of Ethereum addresses.
     :param chunk_size: Size of each chunk.
     :param start_token_id: Starting token ID.
+    :param output_file_path: Path to the output file.
     """
     with open(output_file_path, 'w') as file:
         for i in range(0, len(column_a_values), chunk_size):
@@ -71,7 +73,8 @@ def chunk_addresses(column_a_values, chunk_size, start_token_id, output_file_pat
                 {"recipient": address, "tokenId": start_token_id + j}
                 for j, address in enumerate(chunk)
             ]
-            file.write(str(formatted_chunk) + "\n\n")
+            json_chunk = json.dumps(formatted_chunk)
+            file.write(json_chunk + "\n\n")
             start_token_id += len(chunk)
 
 # print(f"Chunked addresses written to {output_file_path}")
